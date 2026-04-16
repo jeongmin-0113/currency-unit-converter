@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class ConversionResultEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0L,
     val fromCode: String,   // 대상 통화 코드
     val fromName: String,   // 대상 통화 이름
     val fromAmount: Double,  // 환전 이전 금액
