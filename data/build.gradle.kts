@@ -1,7 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+}
+
+val properties = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -17,6 +23,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "EXCHANGE_RATE_API_KEY", "\"${properties["exchange_rate_api_key"]}\"")
     }
 
     buildTypes {
@@ -36,6 +43,10 @@ android {
         unitTests.all {
             it.useJUnitPlatform()
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 

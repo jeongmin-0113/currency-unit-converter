@@ -9,6 +9,7 @@ import com.example.domain.model.ConversionResult
 import com.example.domain.model.Currency
 import com.example.domain.repository.CurrencyRepository
 import javax.inject.Inject
+import com.example.data.BuildConfig
 
 class CurrencyRepositoryImpl @Inject constructor(
     val currencyDao: CurrencyDao,
@@ -16,7 +17,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     val api: ExchangeRateApi
 ) : CurrencyRepository {
     override suspend fun updateCurrency(): List<Currency> {
-        val apiKey = "api key" // todo: BuildConfig로 분리
+        val apiKey = BuildConfig.EXCHANGE_RATE_API_KEY
         val response = api.getExchangeRate(apiKey)
 
         val entities = response.rates.map { (code, rate) ->
