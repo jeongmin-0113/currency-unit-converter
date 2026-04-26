@@ -80,4 +80,5 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.coroutinesTest)
     testImplementation(libs.room.testing)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

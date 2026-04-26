@@ -16,25 +16,28 @@ class CurrencyRepositoryImpl @Inject constructor(
     val conversionResultDao: ConversionResultDao,
     val api: ExchangeRateApi
 ) : CurrencyRepository {
-    override suspend fun updateCurrency(): List<Currency> {
+    override suspend fun updateCurrency(): Result<List<Currency>> {
         val apiKey = BuildConfig.EXCHANGE_RATE_API_KEY
-        val response = api.getExchangeRate(apiKey)
 
-        val entities = response.rates.map { (code, rate) ->
-            CurrencyEntity(
-                code = code,
-                name = code,
-                rate = rate
-            )
-        }
-        currencyDao.saveCurrency(entities)
+        return runCatching {
+            val response = api.getExchangeRate(apiKey)
 
-        return entities.map { entity ->
-            Currency(
-                code = entity.code,
-                name = entity.name,
-                rate = entity.rate
-            )
+            val entities = response.rates.map { (code, rate) ->
+                CurrencyEntity(
+                    code = code,
+                    name = code,
+                    rate = rate
+                )
+            }
+            currencyDao.saveCurrency(entities)
+
+            entities.map { entity ->
+                Currency(
+                    code = entity.code,
+                    name = entity.name,
+                    rate = entity.rate
+                )
+            }
         }
     }
 
