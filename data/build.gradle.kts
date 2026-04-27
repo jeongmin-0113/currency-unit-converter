@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kover)
 }
 
 val properties = Properties().apply {
@@ -80,4 +81,5 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.coroutinesTest)
     testImplementation(libs.room.testing)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
