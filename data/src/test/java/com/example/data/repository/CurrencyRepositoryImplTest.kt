@@ -1,10 +1,12 @@
 package com.example.data.repository
 
 import com.example.data.local.ConversionResultDao
+import com.example.data.local.ConversionResultEntity
 import com.example.data.local.CurrencyDao
 import com.example.data.local.CurrencyEntity
 import com.example.data.remote.ExchangeRateApi
 import com.example.data.remote.ExchangeRateDto
+import com.example.domain.model.ConversionResult
 import com.example.domain.model.Currency
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -100,5 +102,67 @@ class CurrencyRepositoryImplTest {
         val result = currencyRepositoryImpl.getCurrency(code)
 
         assertNull(result)
+    }
+
+    @Test
+    fun saveConversionResult() = runTest {
+        coEvery { conversionResultDao.saveConversionResult(any()) } just Runs
+
+        val result = ConversionResult(
+            fromCode = "USD",
+            fromName = "USD",
+            fromAmount = 1.0,
+            toCode = "KRW",
+            toName = "KRW",
+            toAmount = 1450.0
+        )
+        currencyRepositoryImpl.saveConversionResult(result)
+
+        val expect = ConversionResultEntity(
+            fromCode = result.fromCode,
+            fromName = result.fromName,
+            fromAmount = result.fromAmount,
+            toCode = result.toCode,
+            toName = result.toName,
+            toAmount = result.toAmount
+        )
+        coVerify { conversionResultDao.saveConversionResult(expect) }
+    }
+
+    @Test
+    fun getAllConversionResults() = runTest {
+        val entities = listOf(
+            ConversionResultEntity(
+                fromCode = "USD",
+                fromName = "USD",
+                fromAmount = 1.0,
+                toCode = "KRW",
+                toName = "KRW",
+                toAmount = 1450.0
+            ),
+            ConversionResultEntity(
+                fromCode = "JPY",
+                fromName = "JPY",
+                fromAmount = 100.0,
+                toCode = "KRW",
+                toName = "KRW",
+                toAmount = 940.0
+            )
+        )
+        coEvery { conversionResultDao.getAllConversionResults() } returns entities
+
+        val result = currencyRepositoryImpl.getAllConversionResults()
+        val expect = entities.map { entity ->
+            ConversionResult(
+                fromCode = entity.fromCode,
+                fromName = entity.fromName,
+                fromAmount = entity.fromAmount,
+                toCode = entity.toCode,
+                toName = entity.toName,
+                toAmount = entity.toAmount
+            )
+        }
+
+        assertEquals(expect, result)
     }
 }
